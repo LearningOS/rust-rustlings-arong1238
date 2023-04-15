@@ -14,11 +14,11 @@
 
 // Execute `rustlings hint hashmaps3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+
 
 use std::collections::HashMap;
 
-// A structure to store team name and its goal details.
+// 一个存储队伍名字和它的得分详情的结构。
 struct Team {
     name: String,
     goals_scored: u8,
@@ -26,7 +26,7 @@ struct Team {
 }
 
 fn build_scores_table(results: String) -> HashMap<String, Team> {
-    // The name of the team is the key and its associated struct is the value.
+    // 队伍的名字是键，它关联的结构体是值。
     let mut scores: HashMap<String, Team> = HashMap::new();
 
     for r in results.lines() {
@@ -35,11 +35,35 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         let team_1_score: u8 = v[2].parse().unwrap();
         let team_2_name = v[1].to_string();
         let team_2_score: u8 = v[3].parse().unwrap();
-        // TODO: Populate the scores table with details extracted from the
-        // current line. Keep in mind that goals scored by team_1
-        // will be number of goals conceded from team_2, and similarly
-        // goals scored by team_2 will be the number of goals conceded by
-        // team_1.
+        // TODO: 使用从当前行提取的详细信息填充得分表。
+        // 请记住，队伍1的得分将会是队伍2的丢分，
+        // 同样，队伍2的得分也将会是队伍1的丢分。
+        if !scores.contains_key(&team_1_name) {
+            let mut team1 = Team {
+                name: String::from(&team_1_name),
+                goals_scored: team_1_score,
+                goals_conceded: team_2_score,
+            };
+            scores.insert(team_1_name, team1);
+        } else {
+            if let Some(x) = scores.get_mut(&team_1_name) {
+                x.goals_scored += team_1_score;
+                x.goals_conceded += team_2_score;
+            }
+        }
+        if !scores.contains_key(&team_2_name) {
+            let mut team2 = Team {
+                name: String::from(&team_2_name),
+                goals_scored: team_2_score,
+                goals_conceded: team_1_score,
+            };
+            scores.insert(team_2_name, team2);
+        } else {
+            if let Some(x) = scores.get_mut(&team_2_name) {
+                x.goals_scored += team_2_score;
+                x.goals_conceded += team_1_score;
+            }
+        }
     }
     scores
 }
@@ -85,3 +109,4 @@ mod tests {
         assert_eq!(team.goals_conceded, 2);
     }
 }
+
