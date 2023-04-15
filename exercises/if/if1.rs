@@ -1,13 +1,18 @@
 // if1.rs
 // Execute `rustlings hint if1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+
 
 pub fn bigger(a: i32, b: i32) -> i32 {
-    // Complete this function to return the bigger number!
-    // Do not use:
-    // - another function call
-    // - additional variables
+    if a > b {
+        a 
+    } else {
+        b 
+    }
+    // 完成这个函数使它返回一个较大值
+    // 不要使用：
+    // - 其它函数调用
+    // - 额外的变量
 }
 
 // Don't mind this for now :)
@@ -25,3 +30,4 @@ mod tests {
         assert_eq!(42, bigger(32, 42));
     }
 }
+
