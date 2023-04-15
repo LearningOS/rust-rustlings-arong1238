@@ -16,21 +16,21 @@
 
 // Execute `rustlings hint errors5` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+
 
 use std::error;
 use std::fmt;
 use std::num::ParseIntError;
 
-// TODO: update the return type of `main()` to make this compile.
-fn main() -> Result<(), Box<dyn ???>> {
+// TODO: 更新 `main()` 的返回值类型以使编译通过。
+fn main() -> Result<(), Box<dyn error::Error>> {
     let pretend_user_input = "42";
     let x: i64 = pretend_user_input.parse()?;
     println!("output={:?}", PositiveNonzeroInteger::new(x)?);
     Ok(())
 }
 
-// Don't change anything below this line.
+// 不要改变这行以下的任何东西。
 
 #[derive(PartialEq, Debug)]
 struct PositiveNonzeroInteger(u64);
@@ -46,12 +46,12 @@ impl PositiveNonzeroInteger {
         match value {
             x if x < 0 => Err(CreationError::Negative),
             x if x == 0 => Err(CreationError::Zero),
-            x => Ok(PositiveNonzeroInteger(x as u64))
+            x => Ok(PositiveNonzeroInteger(x as u64)),
         }
     }
 }
 
-// This is required so that `CreationError` can implement `error::Error`.
+// 这是必须的，以便 `CreationError` 可以实现 `error::Error`。
 impl fmt::Display for CreationError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let description = match *self {
@@ -63,3 +63,4 @@ impl fmt::Display for CreationError {
 }
 
 impl error::Error for CreationError {}
+
