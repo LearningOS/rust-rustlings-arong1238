@@ -1,35 +1,37 @@
-// errors3.rs
-// This is a program that is trying to use a completed version of the
-// `total_cost` function from the previous exercise. It's not working though!
-// Why not? What should we do to fix it?
-// Execute `rustlings hint errors3` or use the `hint` watch subcommand for a hint.
+// errors4.rs
+// Execute `rustlings hint errors4` or use the `hint` watch subcommand for a hint.
 
 
 
-use std::num::ParseIntError;
+#[derive(PartialEq, Debug)]
+struct PositiveNonzeroInteger(u64);
 
-fn main() {
-    let mut tokens = 100;
-    let pretend_user_input = "8";
+#[derive(PartialEq, Debug)]
+enum CreationError {
+    Negative,
+    Zero,
+}
 
-    let cost = match total_cost(pretend_user_input) {
-        Ok(cost) => cost,
-        _ => std::process::exit(0),
-    };
-
-    if cost > tokens {
-        println!("You can't afford that many!");
-    } else {
-        tokens -= cost;
-        println!("You now have {} tokens.", tokens);
+impl PositiveNonzeroInteger {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
+        // 嗯。。为什么这只返回了一个 Ok 值？
+        if value > 0 {
+            Ok(PositiveNonzeroInteger(value as u64))
+        } else if value == 0 {
+            Err(CreationError::Zero)
+        } else {
+            Err(CreationError::Negative)
+        }
     }
 }
 
-pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
-    let processing_fee = 1;
-    let cost_per_item = 5;
-    let qty = item_quantity.parse::<i32>()?;
-
-    Ok(qty * cost_per_item + processing_fee)
+#[test]
+fn test_creation() {
+    assert!(PositiveNonzeroInteger::new(10).is_ok());
+    assert_eq!(
+        Err(CreationError::Negative),
+        PositiveNonzeroInteger::new(-10)
+    );
+    assert_eq!(Err(CreationError::Zero), PositiveNonzeroInteger::new(0));
 }
 
