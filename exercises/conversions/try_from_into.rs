@@ -14,61 +14,78 @@ struct Color {
     blue: u8,
 }
 
-// We will use this error type for these `TryFrom` conversions.
+// 我们将会把这个错误类型用于 `TryFrom` 转换。
 #[derive(Debug, PartialEq)]
 enum IntoColorError {
-    // Incorrect length of slice
+    // 不正确的切片长度
     BadLen,
-    // Integer conversion error
+    // 整数转换错误
     IntConversion,
 }
 
-// I AM NOT DONE
 
-// Your task is to complete this implementation
-// and return an Ok result of inner type Color.
-// You need to create an implementation for a tuple of three integers,
-// an array of three integers, and a slice of integers.
+
+// 你的任务是完成这个实现并返回一个 Ok 结果，内含一个 Color 类型。
+// 你需要针对一个包含三个整数的元组、一个包含三个整数的数组以及一个整数切片创建实现。
 //
-// Note that the implementation for tuple and array will be checked at compile time,
-// but the slice implementation needs to check the slice length!
-// Also note that correct RGB color values must be integers in the 0..=255 range.
+// 注意为元组和数组创建的实现会在编译器被检查，
+// 但是为切片创建的实现需要检查切片的长度！
+// 还要注意正确的 RGB 颜色的值必须为 0..=255 范围内的整数。
 
-// Tuple implementation
+// 元组实现
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        if tuple.0 <= 255 && tuple.0 > 0 && tuple.1 <= 255 && tuple.1 > 0 && tuple.2 <= 255 && tuple.1 > 0 {
+            Ok(Color { red: tuple.0 as u8, green: tuple.1 as u8, blue: tuple.2 as u8})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
-// Array implementation
+// 数组实现
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        if arr[0] <= 255 && arr[0] > 0 && arr[1] <= 255 && arr[1] > 0 && arr[2] <= 255 && arr[2] > 0 {
+            Ok(Color { red: arr[0] as u8, green: arr[1] as u8, blue: arr[2] as u8})
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
     }
 }
 
-// Slice implementation
+// 切片实现
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            Err(IntoColorError::BadLen)
+        } else {
+            if slice[0] <= 255 && slice[0] > 0 && slice[1] <= 255 && slice[1] > 0 && slice[2] <= 255 && slice[2] > 0 {
+                Ok(Color { red: slice[0] as u8, green: slice[1] as u8, blue: slice[2] as u8})
+            } else {
+                Err(IntoColorError::IntConversion)
+            }
+        }
     }
 }
 
 fn main() {
-    // Use the `try_from` function
+    // 使用 `try_from` 函数
     let c1 = Color::try_from((183, 65, 14));
     println!("{:?}", c1);
 
-    // Since TryFrom is implemented for Color, we should be able to use TryInto
+    // 由于 TryFrom 被实现于 Color，我们可以使用 TryInto
     let c2: Result<Color, _> = [183, 65, 14].try_into();
     println!("{:?}", c2);
 
     let v = vec![183, 65, 14];
-    // With slice we should use `try_from` function
+    // 对于切片我们可以使用 `try_from` 函数
     let c3 = Color::try_from(&v[..]);
     println!("{:?}", c3);
-    // or take slice within round brackets and use TryInto
+    // 或者用括号包含切片并使用 TryInto
     let c4: Result<Color, _> = (&v[..]).try_into();
     println!("{:?}", c4);
 }
